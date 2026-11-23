@@ -7,14 +7,14 @@ jobs:
   compare:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.base_ref }}
           path: base
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: head
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install agentgauge-eval
@@ -24,7 +24,7 @@ jobs:
       - name: Run the suite on the pull request
         working-directory: head
         run: agentgauge run evals/suite.yaml --db "$GITHUB_WORKSPACE/runs.db"
-      - uses: AliNaveed01/agentgauge@v0.5.0
+      - uses: AliNaveed01/agentgauge@ci/79-node-actions
         with:
           baseline: previous
           candidate: latest
