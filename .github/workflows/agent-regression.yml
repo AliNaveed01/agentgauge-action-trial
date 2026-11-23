@@ -1,0 +1,31 @@
+name: agent regression
+
+on:
+  pull_request:
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+      - uses: actions/checkout@v4
+        with:
+          path: head
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install agentgauge-eval
+      - name: Run the suite on the base branch
+        working-directory: base
+        run: agentgauge run evals/suite.yaml --db "$GITHUB_WORKSPACE/runs.db"
+      - name: Run the suite on the pull request
+        working-directory: head
+        run: agentgauge run evals/suite.yaml --db "$GITHUB_WORKSPACE/runs.db"
+      - uses: AliNaveed01/agentgauge@v0.5.0
+        with:
+          baseline: previous
+          candidate: latest
+          db: runs.db
